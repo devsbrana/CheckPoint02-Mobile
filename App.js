@@ -1,18 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet, View, Image, TextInput, Button} from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View, Image, TextInput, Button, Text} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
-  const[nomeAluno, setNomeAluno] = useState('');
-  const[nomeCurso, setNomeCurso] = useState('');
-  const[nomeDisciplina, setNomeDisciplina] = useState('');
-  const[Descricao, setDescricao] = useState('');
-  const[mostrarDados, setMostrarDados] = useState(false)
-  
+
+  useEffect(() => {
+    console.log('Aplicativo Iniciado');
+  }, []);
+
+  const [nomeAluno, setNomeAluno] = useState('');
+  const [nomeCurso, setNomeCurso] = useState('');
+  const [nomeDisciplina, setNomeDisciplina] = useState('');
+  const [Descricao, setDescricao] = useState('');
+  const [mostrarDados, setMostrarDados] = useState(false);
+  const [dadosExibidos, setDadosExibidos] = useState(null);
+
+  function handleCadastrar() {
+    setDadosExibidos({
+      nome: nomeAluno,
+      curso: nomeCurso,
+      disciplina: nomeDisciplina,
+      descricao: Descricao,
+    });
+    setMostrarDados(true);
+  }
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
+        <Text style={styles.titulo}>Formulário de Cadastro</Text>
         <Image style={styles.image}
           source={require('./assets/fiaplogo.jpg')}
         />
@@ -23,6 +40,7 @@ export default function App() {
           placeholder='Digite seu nome:'
           autoCapitalize='words'
           maxLength={30}
+          onChangeText={(text) => setNomeAluno(text)}
         />
         <TextInput
           style={styles.input}
@@ -30,6 +48,7 @@ export default function App() {
           placeholder='Curso:'
           autoCapitalize='words'
           maxLength={50}
+          onChangeText={(text) => setNomeCurso(text)}
         />
         <TextInput
           style={styles.input}
@@ -37,15 +56,26 @@ export default function App() {
           placeholder='Disciplina:'
           autoCapitalize='words'
           maxLength={50}
+          onChangeText={(text) => setNomeDisciplina(text)}
         />
         <TextInput
           style={styles.input}
           value={Descricao}
-          placeholder='Breve descrição pessoal:'
+          placeholder='Descrição pessoal (2 a 3 linhas):'
           autoCapitalize='words'
           maxLength={200}
+          onChangeText={(text) => setDescricao(text)}
         />
-        <Button title='Cadastrar' onPress={()=>setMostrarDados(true)}/>
+        <Button title='Cadastrar' onPress={handleCadastrar}/>
+
+        {mostrarDados && (
+          <View style={{ width: 300, marginTop: 20 }}>
+            <Text>Nome: {dadosExibidos.nome}</Text>
+            <Text>Curso: {dadosExibidos.curso}</Text>
+            <Text>Disciplina: {dadosExibidos.disciplina}</Text>
+            <Text>Descrição: {dadosExibidos.descricao}</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -56,23 +86,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 30,
+  },
+
+  titulo: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20
   },
 
   image: {
-  width: 200,
-  height: 200,
-  resizeMode: 'contain'
+    width: 200,
+    height: 200,
+    resizeMode: 'contain'
   },
 
   input: {
-    backgroundColor: 'fff',
+    backgroundColor: '#fff',
     width: 300,
     borderRadius: 7,
     paddingLeft: 10,
     fontSize: 15,
     marginBottom: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
+    borderWidth: 1,
+    borderColor: '#ccc',
   }
 });
