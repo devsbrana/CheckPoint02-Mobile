@@ -1,12 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TelaUser() {
     return(
-        <View>
-            <Text>Tela User</Text>
-            <StatusBar style="auto"/>
-        </View>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <Text style={styles.titulo}>
+                    Tela user</Text>
+                <StatusBar style="auto"/>
+            </View>
+        </SafeAreaView>
     );
 }
 
@@ -17,4 +21,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    titulo: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20
+  },
 })

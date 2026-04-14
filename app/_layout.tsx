@@ -4,13 +4,13 @@ export default function Layout() {
   return (
     <Drawer>
       <Drawer.Screen
-        name="cadastro" // This is the name of the page and must match the url from root
+        name="cadastro" 
         options={{
           title: 'cadastro',
         }}
       />
       <Drawer.Screen
-        name="user" // This is the name of the page and must match the url from root
+        name="user" 
         options={{
           title: 'user',
         }}
