@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Image, TextInput, Button, Text } from 'react-native';
+import { StyleSheet, View, Image, TextInput, Text, Alert, Button, ScrollView } from 'react-native';
 import { MaskedTextInput } from 'react-native-mask-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 type DadosAluno = {
   nome: string;
@@ -13,30 +15,47 @@ type DadosAluno = {
 
 export default function Cadastro() {
 
-  useEffect(() => {
-    console.log('Aplicativo Iniciado');
-  }, []);
+  const router = useRouter();
 
   const [nomeAluno, setNomeAluno] = useState('');
   const [rm, setRm] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
-  const [mostrarDados, setMostrarDados] = useState(false);
-  const [dadosExibidos, setDadosExibidos] = useState<DadosAluno | null>(null);
 
-  function handleCadastrar() {
-    setDadosExibidos({
+  useEffect(() => {
+    async function carregarDados() {
+      const dadosSalvos = await AsyncStorage.getItem('dadosAluno');
+      if (dadosSalvos) {
+        const dados: DadosAluno = JSON.parse(dadosSalvos);
+        setNomeAluno(dados.nome);
+        setRm(dados.rm);
+        setTelefone(dados.telefone);
+        setCpf(dados.cpf);
+      }
+    }
+    carregarDados();
+  }, []);
+
+  async function handleCadastrar() {
+    if (!nomeAluno || !rm || !telefone || !cpf) {
+      Alert.alert('Atenção', 'Por favor, preencha todos os campos!');
+      return;
+    }
+
+    const dadosAluno: DadosAluno = {
       nome: nomeAluno,
+      rm: rm,
       telefone: telefone,
-      rm : rm,
       cpf: cpf,
-    });
-    setMostrarDados(true);
+    };
+
+    await AsyncStorage.setItem('dadosAluno', JSON.stringify(dadosAluno));
+    router.push('/user');
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.titulo}>Formulário de Cadastro</Text>
         <Image style={styles.image}
           source={require('../assets/fiaplogo.jpg')}
@@ -54,7 +73,6 @@ export default function Cadastro() {
           style={styles.input}
           value={rm}
           placeholder='Digite seu RM:'
-          autoCapitalize='words'
           maxLength={30}
           onChangeText={(text) => setRm(text)}
         />
@@ -75,15 +93,7 @@ export default function Cadastro() {
           placeholder='CPF:'
         />
         <Button title='Cadastrar' onPress={handleCadastrar} />
-
-        {mostrarDados && dadosExibidos && (
-          <View style={{ width: 300, marginTop: 20 }}>
-            <Text>Nome: {dadosExibidos.nome}</Text>
-            <Text>Telefone: {dadosExibidos.telefone}</Text>
-            <Text>CPF: {dadosExibidos.cpf}</Text>
-          </View>
-        )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -99,12 +109,12 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginBottom: 20
+    marginBottom: 20,
   },
   image: {
     width: 200,
     height: 200,
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   input: {
     backgroundColor: '#fff',
@@ -116,7 +126,4 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
   },
-  button: {
-    marginBottom: 20,
-  }
 });

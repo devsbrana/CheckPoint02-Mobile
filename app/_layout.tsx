@@ -1,5 +1,5 @@
 import { Drawer } from 'expo-router/drawer';
-import { Ionicons } from '@expo/vector-icons'; // 👈 Importa os ícones
+import { Ionicons } from '@expo/vector-icons'; 
 
 export default function Layout() {
   return (
