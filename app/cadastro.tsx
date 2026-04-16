@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Image, TextInput, Button, Text } from 'react-native';
+import { StyleSheet, View, Image, TextInput, Button, Text, Alert } from 'react-native';
 import { MaskedTextInput } from 'react-native-mask-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 type DadosAluno = {
   nome: string;
@@ -13,9 +15,7 @@ type DadosAluno = {
 
 export default function Cadastro() {
 
-  useEffect(() => {
-    console.log('Aplicativo Iniciado');
-  }, []);
+  const router = useRouter();
 
   const [nomeAluno, setNomeAluno] = useState('');
   const [rm, setRm] = useState('');
@@ -24,14 +24,38 @@ export default function Cadastro() {
   const [mostrarDados, setMostrarDados] = useState(false);
   const [dadosExibidos, setDadosExibidos] = useState<DadosAluno | null>(null);
 
-  function handleCadastrar() {
-    setDadosExibidos({
+  useEffect(() =>{
+    async function carregarDados() {
+      const dadosSalvos = await AsyncStorage.getItem('dadosAluno');
+
+      if (dadosSalvos) {
+        const dados: DadosAluno = JSON.parse(dadosSalvos);
+        setNomeAluno(dados.nome);
+        setRm(dados.rm);
+        setTelefone(dados.telefone);
+        setCpf(dados.cpf);
+      }
+    }
+
+    carregarDados();
+  }, []);
+
+  async function handleCadastrar() {
+    if (!nomeAluno || !rm || !telefone || !cpf)  {
+      Alert.alert('Atenção', 'Por favor, preencha todos os campos!');
+      return;
+    }
+
+    const dadosAluno: DadosAluno = {
       nome: nomeAluno,
+      rm: rm,
       telefone: telefone,
-      rm : rm,
-      cpf: cpf,
-    });
-    setMostrarDados(true);
+      cpf: cpf
+    };
+
+    await AsyncStorage.setItem('dadosAluno', JSON.stringify(dadosAluno));
+
+    router.push('/user');
   }
 
   return (
@@ -74,7 +98,7 @@ export default function Cadastro() {
           keyboardType="numeric"
           placeholder='CPF:'
         />
-        <Button title='Cadastrar' onPress={handleCadastrar} />
+        <Button title='Cadastrar' onPress={handleCadastrar}/>
 
         {mostrarDados && dadosExibidos && (
           <View style={{ width: 300, marginTop: 20 }}>
@@ -115,8 +139,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ccc',
-  },
-  button: {
-    marginBottom: 20,
   }
 });
