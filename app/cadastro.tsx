@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Image, TextInput, Button, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Image, TextInput, Button, Text } from 'react-native';
 import { MaskedTextInput } from 'react-native-mask-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,9 +9,6 @@ type DadosAluno = {
   rm: string;
   telefone: string;
   cpf: string;
-  curso: string;
-  disciplina: string;
-  descricao: string;
 }
 
 export default function Cadastro() {
@@ -24,9 +21,6 @@ export default function Cadastro() {
   const [rm, setRm] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
-  const [nomeCurso, setNomeCurso] = useState('');
-  const [nomeDisciplina, setNomeDisciplina] = useState('');
-  const [descricao, setDescricao] = useState('');
   const [mostrarDados, setMostrarDados] = useState(false);
   const [dadosExibidos, setDadosExibidos] = useState<DadosAluno | null>(null);
 
@@ -36,16 +30,12 @@ export default function Cadastro() {
       telefone: telefone,
       rm : rm,
       cpf: cpf,
-      curso: nomeCurso,
-      disciplina: nomeDisciplina,
-      descricao: descricao,
     });
     setMostrarDados(true);
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.container}>
         <Text style={styles.titulo}>Formulário de Cadastro</Text>
         <Image style={styles.image}
@@ -84,30 +74,6 @@ export default function Cadastro() {
           keyboardType="numeric"
           placeholder='CPF:'
         />
-        <TextInput
-          style={styles.input}
-          value={nomeCurso}
-          placeholder='Curso:'
-          autoCapitalize='words'
-          maxLength={50}
-          onChangeText={(text) => setNomeCurso(text)}
-        />
-        <TextInput
-          style={styles.input}
-          value={nomeDisciplina}
-          placeholder='Disciplina:'
-          autoCapitalize='words'
-          maxLength={50}
-          onChangeText={(text) => setNomeDisciplina(text)}
-        />
-        <TextInput
-          style={styles.input}
-          value={descricao}
-          placeholder='Descrição pessoal (2 a 3 linhas):'
-          autoCapitalize='words'
-          maxLength={200}
-          onChangeText={(text) => setDescricao(text)}
-        />
         <Button title='Cadastrar' onPress={handleCadastrar} />
 
         {mostrarDados && dadosExibidos && (
@@ -115,13 +81,9 @@ export default function Cadastro() {
             <Text>Nome: {dadosExibidos.nome}</Text>
             <Text>Telefone: {dadosExibidos.telefone}</Text>
             <Text>CPF: {dadosExibidos.cpf}</Text>
-            <Text>Curso: {dadosExibidos.curso}</Text>
-            <Text>Disciplina: {dadosExibidos.disciplina}</Text>
-            <Text>Descrição: {dadosExibidos.descricao}</Text>
           </View>
         )}
       </View>
-      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -153,5 +115,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ccc',
+  },
+  button: {
+    marginBottom: 20,
   }
 });
